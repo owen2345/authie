@@ -29,20 +29,13 @@ The design goals behind Authie are:
 * Sessions should automatically expire after a certain period of inactivity.
 * Sessions can be either permanent or temporary.
 
-## Important notice...
-
-An issue was identified regarding the way sessions are invalidated when they
-become invalid. In versions < 1.1.0, sessions which expire while they are in
-use are not invalidated. This is fixed in => 1.1.1 and I strongly recommend
-that everyone is running this version or higher to benefit from all the
-functionality in Authie.
 
 ## Installation
 
 As usual, just pop this in your Gemfile:
 
 ```ruby
-gem 'authie', '~> 1.1'
+gem 'authie', :git => "git@github.com:owen2345/authie.git"
 ```
 
 You will then need to run your `db:migrate` task to add the Authie sessions table
@@ -69,7 +62,7 @@ class AuthenticationController < ApplicationController
   def login
     if request.post?
       if user = User.authenticate(params[:username], params[:password])
-        self.current_user = user
+        auth_current_user(user) # init a session for this user
         redirect_to root_path
       else
         flash.now[:alert] = "Username/password was invalid"
